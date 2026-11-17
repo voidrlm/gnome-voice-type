@@ -1,0 +1,11 @@
+{
+  "uuid": "voice-type@arjun",
+  "name": "Voice Type",
+  "description": "Windows-style voice typing. Super+V starts live dictation: words are transcribed locally with Whisper and typed into the focused window as you speak. Press Super+V again (or click the pill) to stop.",
+  "shell-version": [
+    "48",
+    "49",
+    "50",
+    "51"
+  ]
+}
