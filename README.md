@@ -21,7 +21,9 @@ Log out and back in (Wayland) for GNOME to discover it.
 
 ## How it works
 
-`dictate.py` records from the default mic and uses Silero VAD to find phrases. While you talk, the current phrase is re-transcribed every 0.4 s, and words that two passes in a row agree on are typed. Typed words are never revised; a pause ends the phrase and a final pass types the rest. The extension types through a virtual keyboard, so text is plain ASCII.
+`dictate.py` records from the default mic and keeps one rolling audio buffer that spans your pauses (long silences are squeezed to 0.3 s), so Whisper always hears the whole sentence. While you talk, the buffer is re-transcribed every 0.4 s and words that two passes in a row agree on are typed; typed words are never revised. Pausing doesn't end the sentence: after a pause the last word is typed but its full stop is held back until you speak again, and kept only if Whisper, hearing what came next, still ends the sentence there. Silero VAD skips silence (no work while you're quiet) and filters out words Whisper invents in silence ("Thanks.", "Bye."). The extension types through a virtual keyboard, so text is plain ASCII.
+
+Nothing runs while you're not dictating: the helper starts on Super+V and exits when you stop. While listening it uses ~400 MB of RAM and a few CPU cores only while you speak.
 
 ## Options
 
@@ -31,6 +33,6 @@ Set these in `~/.config/environment.d/voice-type.conf` and log back in:
 |---|---|---|
 | `VOICE_TYPE_MODEL` | `base.en` | `small.en` is more accurate but lags a few seconds on a laptop CPU |
 | `VOICE_TYPE_AUTO_STOP` | `30` | seconds of silence before it stops (0 = never) |
-| `VOICE_TYPE_THREADS` | all cores | CPU threads for Whisper |
+| `VOICE_TYPE_THREADS` | up to 8 | CPU threads for Whisper |
 
 Errors from the last session are in `~/.cache/voice-type.log`.
